@@ -1,15 +1,23 @@
-import { ActionFunction, redirect, json } from "@remix-run/node";
-
+import type { ActionFunction } from "@remix-run/node";
+import { redirect, json } from "@remix-run/node";
 import { Form, useActionData, useTransition } from "@remix-run/react";
 import invariant from "tiny-invariant";
-
 import { createPost } from "~/models/post.server";
+import AdminIndex from "~/routes/posts/admin/index";
+import PostAdmin from "~/routes/posts/admin";
 
 type ActionData =
   | {
       title: null | string;
       slug: null | string;
       markdown: null | string;
+      error?: never;
+    }
+  | {
+      title?: never;
+      slug?: never;
+      markdown?: never;
+      error: null | string;
     }
   | undefined;
 
@@ -36,9 +44,16 @@ export const action: ActionFunction = async ({ request }) => {
   invariant(typeof slug === "string", "slug must be a string");
   invariant(typeof markdown === "string", "markdown must be a string");
 
-  await createPost({ title, slug, markdown });
-
-  return redirect("/posts/admin");
+  try {
+    //throw new Error("some error");
+    await createPost({ title, slug, markdown });
+    return redirect("/posts/admin");
+  } catch (err) {
+    return json<ActionData>(
+      { error: "Sorry, we couldn't create the post" },
+      { status: 500 }
+    );
+  }
 };
 
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
@@ -48,8 +63,13 @@ export default function NewPost() {
 
   const transition = useTransition();
   const isCreating = Boolean(transition.submission);
+  const title = transition?.submission?.formData?.get("title");
 
-  return (
+  return isCreating ? (
+    <>
+      <PostAdmin />
+    </>
+  ) : (
     <>
       <Form method="post">
         <p>

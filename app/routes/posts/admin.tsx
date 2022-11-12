@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useLoaderData, Outlet } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { getPosts } from "~/models/post.server";
 
@@ -9,11 +9,17 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async () => {
-  return json<LoaderData>({ posts: await getPosts() });
+  return json({ posts: await getPosts() });
 };
 
-export default function PostAdmin() {
-  const { posts } = useLoaderData() as LoaderData;
+export default function PostAdmin({
+  newPost,
+}: {
+  newPost?: { title: string; slug: string };
+}) {
+  const { posts } = useLoaderData() as unknown as LoaderData;
+  console.log(newPost);
+
   return (
     <div className="mx-auto max-w-4xl">
       <h1 className="my-6 mb-2 border-b-2 text-center text-3xl">Blog Admin</h1>
@@ -30,9 +36,7 @@ export default function PostAdmin() {
           </ul>
         </nav>
         <main className="col-span-4 md:col-span-3">
-          <main className="col-span-4 md:col-span-3">
-            <Outlet />
-          </main>
+          <Outlet />
         </main>
       </div>
     </div>

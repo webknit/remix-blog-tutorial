@@ -21,6 +21,8 @@ import {
   updatePost,
 } from "~/models/post.server";
 
+import PostAdmin from "~/routes/posts/admin/index";
+
 type ActionData =
   | {
       title: null | string;
@@ -83,7 +85,11 @@ export default function SinglePost() {
   const transition = useTransition();
   const isCreating = Boolean(transition.submission);
 
-  return (
+  return isCreating ? (
+    <>
+      <h1>Something</h1>
+    </>
+  ) : (
     <>
       <Form method="post">
         <input value="delete" name="_action" readOnly hidden />
