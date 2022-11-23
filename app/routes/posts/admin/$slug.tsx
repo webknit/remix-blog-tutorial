@@ -9,6 +9,7 @@ import {
   Form,
   useActionData,
   useLoaderData,
+  useMatches,
   useTransition,
 } from "@remix-run/react";
 import { marked } from "marked";
@@ -85,16 +86,19 @@ export default function SinglePost() {
   const transition = useTransition();
   const isCreating = Boolean(transition.submission);
 
-  return isCreating ? (
+  const matches = useMatches();
+
+  const posts = matches.find((item) => item?.data?.posts)?.data?.posts;
+
+  return (
     <>
-      <h1>Something</h1>
-    </>
-  ) : (
-    <>
+      <h1>Posts = {posts ? posts.length : 0}</h1>
       <Form method="post">
         <input value="delete" name="_action" readOnly hidden />
         <input value={post.slug} name="slug" readOnly hidden />
-        <button>Delete</button>
+        <button className="rounded bg-red-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300">
+          Delete
+        </button>
       </Form>
       <Form method="post">
         <p>

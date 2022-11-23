@@ -13,26 +13,12 @@ export const loader = async () => {
   });
 };
 
-export default function Posts() {
+export default function DynamicIndex() {
   const { posts } = useLoaderData() as unknown as LoaderData;
   console.log(posts);
   return (
     <main>
-      <h1>Posts {posts.length}</h1>
-
-      <Link to="admin" className="text-red-600 underline">
-        Admin
-      </Link>
-
-      <ul>
-        {posts.map((post) => (
-          <li key={post.slug}>
-            <Link to={post.slug} className="text-blue-600 underline">
-              {post.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <h1>dynamic/index.tsx {posts.length}</h1>
     </main>
   );
 }

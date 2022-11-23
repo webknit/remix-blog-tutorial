@@ -13,26 +13,12 @@ export const loader: LoaderFunction = async () => {
   return json({ posts: await getPosts() });
 };
 
-export default function PostAdmin({
-  newPost,
-  psts,
-}: {
-  newPost?: { title: string; slug: string };
-  psts?: any;
-}) {
+export default function Dynamic() {
   const { posts } = useLoaderData() as unknown as LoaderData;
-
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="my-6 mb-2 border-b-2 text-center text-3xl">
-        Blog Admin {posts.length}
-      </h1>
-      <div className="grid grid-cols-4 gap-6">
-        <PostList posts={posts} />
-        <main className="col-span-4 md:col-span-3">
-          <Outlet />
-        </main>
-      </div>
+    <div>
+      <h1>dynamic {posts.length}</h1>
+      <Outlet />
     </div>
   );
 }

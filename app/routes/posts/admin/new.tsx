@@ -1,10 +1,26 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useMatches,
+  useTransition,
+} from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { createPost } from "~/models/post.server";
 import AdminIndex from "~/routes/posts/admin/index";
 import PostAdmin from "~/routes/posts/admin";
+
+import { getPosts } from "~/models/post.server";
+
+type LoaderData = {
+  posts: Awaited<ReturnType<typeof getPosts>>;
+};
+
+export const loader: LoaderFunction = async () => {
+  return json({ posts: await getPosts() });
+};
 
 type ActionData =
   | {
@@ -59,18 +75,18 @@ export const action: ActionFunction = async ({ request }) => {
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
 
 export default function NewPost() {
+  const matches = useMatches();
+
+  const posts = matches.find((item) => item?.data?.posts)?.data?.posts;
   const errors = useActionData();
 
   const transition = useTransition();
   const isCreating = Boolean(transition.submission);
   const title = transition?.submission?.formData?.get("title");
 
-  return isCreating ? (
+  return (
     <>
-      <PostAdmin />
-    </>
-  ) : (
-    <>
+      <h1>{posts.length}</h1>
       <Form method="post">
         <p>
           <label>
