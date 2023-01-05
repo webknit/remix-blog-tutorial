@@ -4,9 +4,11 @@ import { usePosts } from "~/hooks/usePosts";
 export default function AdminIndex() {
   const matches = useMatches();
 
+  const [root] = useMatches();
+
   const posts = matches.find((item) => item?.data?.posts)?.data?.posts;
 
-  console.log(posts);
+  console.log(root);
 
   return (
     <div>

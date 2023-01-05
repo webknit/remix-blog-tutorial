@@ -32,7 +32,9 @@ type ActionData =
     }
   | undefined;
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
+  console.log(params);
+
   await new Promise((res) => setTimeout(res, 1000));
 
   const formData = await request.formData();

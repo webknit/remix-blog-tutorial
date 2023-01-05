@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import { getPosts } from "~/models/post.server";
 
 type LoaderData = {
@@ -8,6 +8,10 @@ type LoaderData = {
 };
 
 export const loader = async () => {
+  // throw new Response("Not Found", {
+  //   status: 403,
+  // });
+
   return json<LoaderData>({
     posts: await getPosts(),
   });

@@ -1,5 +1,7 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
+import { T } from "vitest/dist/global-58e8e951";
+import { ZodError, ZodSchema } from "zod";
 
 import type { User } from "~/models/user.server";
 
@@ -68,4 +70,34 @@ export function useUser(): User {
 
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
+}
+
+type ActionErrors<T> = Partial<Record<keyof T, string>>;
+
+export async function validateAction<ActionInput>({
+  request,
+  schema,
+}: {
+  request: Request;
+  schema: ZodSchema;
+}) {
+  const formPayload = Object.fromEntries(await request.formData());
+
+  try {
+    const form = schema.parse(formPayload) as ActionInput;
+    console.log(form);
+
+    return { formData: formPayload, errors: null };
+  } catch (e) {
+    const errors = e as ZodError<ActionInput>;
+
+    return {
+      formData: formPayload,
+      errors: errors.issues.reduce((acc: ActionErrors<ActionInput>, curr) => {
+        const key = curr.path[0] as keyof ActionInput;
+        acc[key] = curr.message;
+        return acc;
+      }, {}),
+    };
+  }
 }
